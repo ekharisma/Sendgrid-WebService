@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ekharisma/sendgrid-web-service/internals/static"
@@ -18,12 +19,12 @@ type EmailClient struct {
 }
 
 type Email struct {
-	SenderName   string
-	SenderMail   string
-	Subject      string
-	ReceiverName string
-	ReceiverMail string
-	Content      string
+	SenderName   string `json:"senderName"`
+	SenderMail   string `json:"senderMail"`
+	Subject      string `json:"subject"`
+	ReceiverName string `json:"receiverName"`
+	ReceiverMail string `json:"receiverMail"`
+	Content      string `json:"content"`
 }
 
 func NewEmailClient(config *static.Config) IEmailClient {
@@ -41,8 +42,10 @@ func (s *EmailClient) Generate(email *Email) *mail.SGMailV3 {
 func (s *EmailClient) Send(mail *mail.SGMailV3) (bool, error) {
 	client := sendgrid.NewSendClient(s.Config.Key)
 	response, err := client.Send(mail)
+	fmt.Println("Code: ", response.StatusCode)
+	fmt.Println("Body: ", response.Body)
 	if err != nil {
 		return false, err
 	}
-	return response.StatusCode == http.StatusOK, nil
+	return response.StatusCode == http.StatusAccepted, nil
 }

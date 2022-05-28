@@ -24,5 +24,6 @@ func main() {
 	sendGridController := controller.NewSendGridController(emailService)
 	http.HandleFunc("/email", sendGridController.SendEmail)
 	port := fmt.Sprintf(":%d", config.Port)
+	fmt.Printf("Listening to :%v", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
